@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TOPIK 5–6级精读跟读 v4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one reading column; each sentence sits on its own, numbered in a left gutter,
+   with its vocabulary and grammar notes directly underneath in order of appearance. */
+:root {
+  --bg: #f4f6f5;
+  --surface: #e9eeec;
+  --fg: #1b2321;
+  --muted: #5a6763;
+  --rule: #d2dad7;
+  --vocab: #155e78;
+  --vocab-soft: #d3e8ef;
+  --gram: #873a68;
+  --gram-soft: #f2dfe9;
+  --gram-hi: #e6c3d7;
+  --pron: #8a5a06;
+  --pron-soft: #f3e6cc;
+  --font-ko: "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --font-hj: "Noto Serif KR", "Noto Serif TC", "PMingLiU", "Songti TC", serif;
+  --font-zh: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --scale: 1;
+  --col: 44rem;
+  --gut: 2rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121716; --surface: #1b2220; --fg: #e2e8e6; --muted: #98a6a2; --rule: #2b3533;
+    --vocab: #79bcd5; --vocab-soft: #1e3a45; --gram: #dca2c5; --gram-soft: #3a2532; --gram-hi: #523046;
+    --pron: #e3b862; --pron-soft: #3b2f17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121716; --surface: #1b2220; --fg: #e2e8e6; --muted: #98a6a2; --rule: #2b3533;
+  --vocab: #79bcd5; --vocab-soft: #1e3a45; --gram: #dca2c5; --gram-soft: #3a2532; --gram-hi: #523046;
+  --pron: #e3b862; --pron-soft: #3b2f17;
+  color-scheme: dark;
+}
+
+/* Standalone page: what the Claude artifact host used to supply */
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+html { font-size: calc(100% * var(--scale)); }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-zh); font-size: 1rem; line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+[lang="ko"] { font-family: var(--font-ko); word-break: keep-all; overflow-wrap: anywhere; }
+
+.wrap {
+  max-width: var(--col); margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Toolbar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); border-bottom: 1px solid var(--rule);
+}
+.bar .wrap {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .5rem 1rem; padding-block: .55rem;
+}
+.nav { display: flex; gap: 1.1rem; font-size: .95rem; }
+.nav a { color: var(--fg); text-decoration: none; }
+.nav a:hover { color: var(--vocab); }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.btn {
+  font: inherit; font-size: .9rem; line-height: 1; color: var(--fg);
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+  padding: .5rem .7rem; cursor: pointer;
+}
+.btn:hover { border-color: var(--muted); }
+.btn:focus-visible, .nav a:focus-visible, summary:focus-visible { outline: 2px solid var(--vocab); outline-offset: 2px; }
+.btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.size { font-variant-numeric: tabular-nums; min-width: 2.6rem; }
+
+/* Intro */
+.intro { padding-block: 2.6rem 1.2rem; }
+.intro h1 {
+  font-size: 1.85rem; line-height: 1.3; font-weight: 700; margin: 0 0 .7rem;
+  text-wrap: balance; letter-spacing: .01em;
+}
+.intro p { margin: 0 0 .5rem; color: var(--muted); max-width: 38rem; }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin-top: 1rem; font-size: .95rem; color: var(--fg); }
+.legend span { display: inline-flex; align-items: center; gap: .45rem; }
+
+/* Highlights in the sentence */
+.hl { background: none; color: inherit; border-radius: 3px; transition: background-color .15s; }
+.hl.v { text-decoration: underline 2px var(--vocab); text-underline-offset: .32em; text-decoration-skip-ink: none; }
+.hl.g { background: var(--gram-soft); padding: .08em .1em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.hl.v.on { background: var(--vocab-soft); }
+.hl.g.on { background: var(--gram-hi); }
+
+/* Article */
+.art { padding-block: 2.4rem 1rem; }
+.a-head { padding-bottom: 1.4rem; }
+.eyebrow { margin: 0; font-size: .82rem; letter-spacing: .12em; color: var(--muted); }
+.a-head h2 { margin: .35rem 0 .2rem; font-size: 1.75rem; line-height: 1.4; font-weight: 700; text-wrap: balance; }
+.a-zh { margin: 0; color: var(--muted); }
+.a-meta { margin: .6rem 0 0; font-size: .88rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.para { padding-top: 1.6rem; }
+.p-label {
+  margin: 0 0 .2rem; font-size: .82rem; letter-spacing: .12em; color: var(--muted);
+  padding-left: calc(var(--gut) + .9rem);
+}
+
+.s {
+  display: grid; grid-template-columns: var(--gut) minmax(0, 1fr); column-gap: .9rem;
+  padding-block: 1.6rem 1.9rem; border-top: 1px solid var(--rule);
+}
+.s:first-child { border-top: 0; padding-top: .8rem; }
+.s-no {
+  grid-column: 1; font-size: .85rem; color: var(--muted); text-align: right;
+  font-variant-numeric: tabular-nums; padding-top: .55rem;
+}
+.s-text { grid-column: 2; margin: 0; font-size: 1.36rem; line-height: 2.05; letter-spacing: .01em; }
+
+.notes {
+  grid-column: 2; list-style: none; margin: 1.25rem 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: .9rem;
+}
+.note {
+  display: grid; grid-template-columns: 2.9rem minmax(0, 1fr); column-gap: .75rem;
+  padding: .35rem .5rem .35rem 0; border-radius: 6px; transition: background-color .15s;
+}
+.note.on { background: var(--surface); }
+.tag {
+  justify-self: start; align-self: start; margin-top: .28rem;
+  font-size: .75rem; line-height: 1; letter-spacing: .06em; padding: .32rem .42rem; border-radius: 4px;
+  white-space: nowrap;
+}
+.note.v .tag { color: var(--vocab); border: 1px solid var(--vocab); }
+.note.g .tag { color: var(--gram); background: var(--gram-soft); border: 1px solid transparent; }
+.nb { min-width: 0; }
+.nb p { margin: 0; }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .7rem; }
+.w { font-size: 1.16rem; font-weight: 600; }
+.note.v .w { color: var(--vocab); }
+.note.g .w { color: var(--gram); }
+.hj { font-family: var(--font-hj); font-size: 1.08rem; letter-spacing: .06em; }
+.hj.native { font-family: var(--font-zh); font-size: .78rem; letter-spacing: .04em; color: var(--muted); border: 1px dashed var(--rule); border-radius: 4px; padding: .1rem .35rem; }
+.mean { font-size: 1.02rem; }
+.extra, .exp { color: var(--muted); font-size: .95rem; margin-top: .15rem !important; }
+.ex { margin-top: .45rem !important; display: flex; flex-direction: column; gap: .1rem; padding-left: .8rem; border-left: 2px solid var(--rule); }
+.ex-ko { font-size: 1.05rem; line-height: 1.8; }
+.ex-zh { color: var(--muted); font-size: .92rem; }
+
+/* Quiz */
+.quiz { margin-top: 2rem; padding: 1.6rem 1.4rem 1.2rem; background: var(--surface); border-radius: 10px; }
+.quiz h3 { margin: 0 0 1rem; font-size: 1.05rem; letter-spacing: .12em; }
+.q { padding-block: .9rem; border-top: 1px solid var(--rule); }
+.q:first-of-type { border-top: 0; padding-top: 0; }
+.q-head { display: flex; gap: .5rem; margin: 0 0 .5rem; font-weight: 600; font-size: 1.08rem; }
+.q-no { font-variant-numeric: tabular-nums; }
+.q-ctx { margin: 0 0 .5rem; padding: .5rem .8rem; background: var(--bg); border-radius: 6px; font-size: 1.08rem; }
+.q-ctx u { text-underline-offset: .25em; }
+.opts { list-style: none; margin: 0 0 .6rem; padding: 0; display: flex; flex-direction: column; gap: .3rem; }
+.opts li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); font-size: 1.08rem; line-height: 1.8; }
+.o-no { color: var(--muted); }
+details summary { cursor: pointer; color: var(--vocab); font-size: .95rem; width: fit-content; }
+.ans { margin: .5rem 0 0; color: var(--fg); }
+.ans b { margin-right: .6rem; color: var(--gram); }
+
+footer { padding-block: 2rem 3rem; color: var(--muted); font-size: .88rem; }
+
+/* Reading mode: plain paragraphs, no notes */
+.reading .notes, .reading .s-no { display: none; }
+.reading .p-body { font-size: 1.36rem; line-height: 2.05; text-indent: 1em; }
+.reading .s { display: inline; padding: 0; border: 0; }
+.reading .s-text { display: inline; font-size: inherit; }
+.reading .hl.v { text-decoration: none; }
+.reading .hl.g { background: none; padding: 0; }
+.reading .p-label { padding-left: 0; }
+.reading .para { padding-top: 1.2rem; }
+
+/* Read-aloud */
+.s-side { grid-column: 1; display: flex; flex-direction: column; align-items: flex-end; gap: .55rem; }
+.s-side .s-no { padding-top: .55rem; }
+.say {
+  display: inline-grid; place-items: center; flex: none;
+  width: 1.9rem; height: 1.9rem; padding: 0; border-radius: 50%;
+  color: var(--muted); background: var(--bg); border: 1px solid var(--rule); cursor: pointer;
+  vertical-align: middle; transition: color .15s, background-color .15s, border-color .15s;
+}
+.say.sm { width: 1.6rem; height: 1.6rem; }
+.say.sm svg { width: 13px; height: 13px; }
+.say:hover { color: var(--vocab); border-color: var(--vocab); }
+.say:focus-visible { outline: 2px solid var(--vocab); outline-offset: 2px; }
+.say.speaking, .s.speaking .say-s { color: var(--bg); background: var(--vocab); border-color: var(--vocab); }
+.ex-ko .say { margin-left: .2rem; }
+.s.speaking .s-text { background: var(--surface); box-shadow: 0 0 0 .45rem var(--surface); border-radius: 4px; }
+.s .hl { cursor: pointer; }
+.hl.speaking { background: var(--vocab-soft); }
+.play-all { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1rem; }
+.play-all[aria-pressed="true"] { background: var(--vocab); color: var(--bg); border-color: var(--vocab); }
+#stop[hidden] { display: none !important; }
+.speed { font-variant-numeric: tabular-nums; }
+.tts { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin-top: 1.1rem; font-size: .92rem; color: var(--muted); }
+.tts label { color: var(--fg); }
+.tts select {
+  font: inherit; font-size: .9rem; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 6px; padding: .35rem .5rem; max-width: 100%;
+}
+.tts-note { margin: .6rem 0 0 !important; padding: .7rem .9rem; border-radius: 8px; background: var(--gram-soft); color: var(--fg) !important; max-width: none !important; font-size: .95rem; }
+.no-tts .say, .no-tts .play-all, .no-tts #speed { display: none; }
+.reading .s-side { display: none; }
+.reading .s.speaking .s-text { box-shadow: none; background: var(--vocab-soft); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.reading .s .hl { cursor: auto; }
+
+/* Mode switch */
+.seg { display: inline-flex; }
+.seg .btn { border-radius: 0; margin-left: -1px; }
+.seg .btn:first-child { border-radius: 6px 0 0 6px; margin-left: 0; }
+.seg .btn:last-child { border-radius: 0 6px 6px 0; }
+body:not(.shadowing) .sh-only { display: none !important; }
+.btn.sm { font-size: .88rem; padding: .45rem .65rem; display: inline-flex; align-items: center; gap: .4rem; }
+
+/* Shadowing view */
+.sh { display: none; }
+.shadowing .sh { display: block; grid-column: 2; min-width: 0; }
+.shadowing .s-text, .shadowing .notes { display: none; }
+.sh-text { margin: 0; font-size: 1.36rem; line-height: 2.75; letter-spacing: .01em; }
+.ck { border-radius: 5px; padding: .1em .12em; cursor: pointer; transition: background-color .15s; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.ck:hover { background: var(--surface); }
+.ck:focus-visible { outline: 2px solid var(--vocab); outline-offset: 1px; }
+.ck.speaking { background: var(--vocab-soft); }
+.sep { color: var(--vocab); opacity: .55; margin-inline: .3em; font-family: var(--font-zh); font-weight: 300; }
+ruby.pr { ruby-position: over; }
+ruby.pr rb { text-decoration: underline dotted 1.5px var(--pron); text-underline-offset: .3em; }
+ruby.pr rt { font-family: var(--font-ko); font-size: .52em; color: var(--pron); letter-spacing: .03em; font-weight: 600; }
+.sh-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .6rem; margin-top: .9rem; }
+.sh-ctl .btn[aria-pressed="true"] { background: var(--vocab); color: var(--bg); border-color: var(--vocab); }
+.sh-stage { font-size: .92rem; color: var(--vocab); font-weight: 500; }
+.pron { margin-top: 1.1rem; }
+.pron-h { margin: 0 0 .45rem; font-size: .82rem; letter-spacing: .1em; color: var(--muted); }
+.pron-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.pron-list li { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .55rem; font-size: .95rem; }
+.pw { font-size: 1.08rem; font-weight: 600; }
+.pp { font-family: var(--font-ko); color: var(--pron); font-weight: 600; font-size: 1.05rem; }
+.rcs { display: inline-flex; flex-wrap: wrap; gap: .3rem; }
+.rc {
+  font-size: .75rem; line-height: 1; padding: .3rem .4rem; border-radius: 4px; text-decoration: none;
+  color: var(--pron); background: var(--pron-soft); white-space: nowrap;
+}
+.rc:hover { text-decoration: underline; }
+.rc:focus-visible { outline: 2px solid var(--pron); outline-offset: 2px; }
+.pn { color: var(--muted); }
+.sh-guide { margin-top: 1.2rem; padding: 1rem 1.1rem; background: var(--surface); border-radius: 10px; }
+.sh-guide p { margin: 0 0 .45rem; color: var(--fg); max-width: none; font-size: .95rem; }
+.sh-guide p:last-child { margin-bottom: 0; }
+
+/* Sound-change reference */
+.rules { padding-block: 2.6rem 1rem; }
+.rules h2 { margin: 0 0 .4rem; font-size: 1.5rem; }
+.rules-lead { margin: 0 0 1.4rem; color: var(--muted); }
+.rule { padding-block: 1rem; border-top: 1px solid var(--rule); scroll-margin-top: 5rem; }
+.rule:target { background: var(--pron-soft); box-shadow: 0 0 0 .6rem var(--pron-soft); border-radius: 4px; }
+.rule h4 { margin: 0 0 .35rem; font-size: 1.08rem; }
+.rule h4 span { color: var(--pron); font-weight: 600; margin-left: .3rem; }
+.rule p { margin: 0; }
+.rule-ex { list-style: none; margin: .55rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; }
+.rule-ex li { display: inline-flex; gap: .35rem; font-size: 1.02rem; }
+.rule-ex li span:first-child { font-family: var(--font-ko); }
+
+@media (max-width: 560px) {
+  :root { --gut: 1.7rem; }
+  .sh-text { font-size: 1.24rem; }
+  .say { width: 1.7rem; height: 1.7rem; }
+  .s { column-gap: .55rem; }
+  .s-text, .reading .p-body { font-size: 1.24rem; }
+  .note { grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: .55rem; }
+  .intro h1 { font-size: 1.55rem; }
+  .a-head h2 { font-size: 1.45rem; }
+  .quiz { padding: 1.2rem 1rem 1rem; }
+  .nav { gap: .8rem; }
+}
+/* Sentence player */
+.pl { display: flex; align-items: center; gap: .75rem; margin-top: .9rem; }
+.pl-btn {
+  flex: none; width: 2.3rem; height: 2.3rem; border-radius: 50%; display: grid; place-items: center;
+  color: var(--bg); background: var(--vocab); border: 0; cursor: pointer; padding: 0;
+}
+.pl-btn svg { width: 15px; height: 15px; }
+.pl-btn .ic-pause, .pl-btn.is-playing svg:first-child { display: none; }
+.pl-btn.is-playing .ic-pause { display: block; }
+.pl-btn:focus-visible, .pl-track:focus-visible { outline: 2px solid var(--vocab); outline-offset: 3px; }
+.pl-track { position: relative; flex: 1; min-width: 0; height: 2rem; cursor: pointer; touch-action: none; border-radius: 4px; }
+.pl-rail, .pl-fill { position: absolute; left: 0; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; }
+.pl-rail { right: 0; background: var(--rule); }
+.pl-fill { width: 0; background: var(--vocab); }
+.pl-tick { position: absolute; top: 50%; width: 3px; height: 12px; margin: -6px 0 0 -1.5px; background: var(--bg); }
+.pl-knob {
+  position: absolute; top: 50%; left: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
+  background: var(--vocab); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--vocab);
+}
+.pl-track.dragging .pl-knob { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.pl-pos { flex: none; min-width: 3.4rem; text-align: right; font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ver { font-size: .55em; font-weight: 500; color: var(--muted); vertical-align: middle; letter-spacing: .04em; }
+.vlog { margin-top: 1.2rem; }
+.vlog-h { margin: 0 0 .3rem; letter-spacing: .1em; }
+.vlog-list { margin: 0 0 .5rem; padding-left: 1.6rem; display: flex; flex-direction: column; gap: .25rem; }
+.vlog-list b { color: var(--fg); margin-right: .5rem; font-weight: 600; }
+footer p { margin: 0 0 .4rem; }
+footer a { color: var(--vocab); }
+footer a:focus-visible { outline: 2px solid var(--vocab); outline-offset: 2px; }
+.art, .rules { scroll-margin-top: 4.5rem; }
+@media (prefers-reduced-motion: reduce) { .hl, .note, .say, .ck { transition: none; } }
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <nav class="nav" aria-label="目录">
+      <a href="../">首页</a><a href="#a1">文章一</a><a href="#a2">文章二</a><a href="#rules">音变速查</a>
+    </nav>
+    <div class="tools">
+      <button class="btn" id="stop" type="button" hidden>■ 停止</button>
+      <button class="btn speed" id="speed" type="button" aria-label="切换朗读语速">语速 0.9×</button>
+      <button class="btn sh-only" id="gap" type="button" aria-label="切换跟读停顿长短">停顿 1.4×</button>
+      <button class="btn sh-only" id="split" type="button" aria-label="切换断句方式">断句 自动</button>
+      <span class="seg" role="group" aria-label="模式"><button class="btn" type="button" data-mode="study" aria-pressed="true">精读</button><button class="btn" type="button" data-mode="read" aria-pressed="false">通读</button><button class="btn" type="button" data-mode="shadow" aria-pressed="false">跟读</button></span>
+      <button class="btn" id="smaller" type="button" aria-label="缩小字号">A−</button>
+      <span class="size" id="size" aria-live="polite">100%</span>
+      <button class="btn" id="bigger" type="button" aria-label="放大字号">A+</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>TOPIK 5–6级精读跟读 <span class="ver">v4</span></h1>
+    <p>两篇高级阅读。每句单独成行，生词和语法按在句中出现的顺序紧跟在下面。汉字词标出韩国通用的繁体汉字。</p>
+    <p>建议先切到「通读」限时 8 分钟读完整篇，再回到「精读」逐句看讲解，最后用「跟读」练口语。</p>
+    <div class="legend" aria-label="图例">
+      <span><mark class="hl v" lang="ko">하다</mark>下划线 = 生词</span>
+      <span><mark class="hl g" lang="ko">-기란</mark>底色 = 语法</span>
+      <span>鼠标停在讲解上，原句对应处会亮起</span>
+    </div>
+    <div class="tts" id="tts">
+      <span>朗读：点句子左边或单词旁的喇叭，或直接点原句里标出的词</span>
+      <span id="voice-wrap" hidden><label for="voice">韩语语音</label> <select id="voice"></select></span>
+    </div>
+    <p class="tts-note" id="tts-note" hidden></p>
+    <div class="sh-guide sh-only">
+      <p><b>跟读模式</b>：句子按意群用 / 分开，读音和拼写不同的词上方标出实际读音。</p>
+      <p>每句下面有一条进度条，竖线是意群分界：点 ▶ 播放，再点暂停，暂停后再点从停下的地方继续；点或拖动进度条可以跳到任意一个词。点句子里任意一块，会从这一块开始读到句尾。</p>
+      <p>「跟读这句」分三步：① 听整句 → ② 逐块播放，每块后停顿让你跟读 → ③ 再放整句，你跟着连起来说。</p>
+      <p>第 ② 步优先用「整句暂停」：整句只合成一次，在意群边界暂停，保留句中的语调。浏览器不支持时会自动改成逐块朗读，顶栏「断句」会显示当前用的方式，也可以手动切换。进度条同理：Edge 的语音会报告读到哪个词，进度准确；Chrome 的 Google 语音不报告，进度按时间估算，暂停位置可能差一两个词，继续播放时会从那个词重新开始。</p>
+    </div>
+  </section>
+  <!--ARTICLES-->
+  <!--RULES-->
+  <footer>
+    <p>题型仿照 TOPIK II 阅读：主旨、内容一致、写作目的、近义表达。</p>
+    <div class="vlog">
+      <p class="vlog-h">版本记录</p>
+      <ol class="vlog-list" reversed>
+        <li><b>v4（本页）</b>跟读模式每句加进度条，可暂停、继续、点击或拖动跳转；点语块改为从这块读到句尾，只读一次；去掉「倒序累加」。</li>
+        <li><b>v3</b>页面「TOPIK 5–6级精读跟读」：新增跟读模式、意群断句、读音标注、音变速查。</li>
+        <li><b>v2</b>页面「TOPIK 5–6级随文精读」的第 2 版：新增朗读整篇、单句、单词。</li>
+        <li><b>v1</b>同一页面的第 1 版：逐句排版，生词和语法紧跟在每句下面。</li>
+      </ol>
+      <p>更早的是 Docs 文档「TOPIK 5–6级阅读练习」。v1–v3 保存在作者的本地存档里。<a href="../french/">法语版在这里</a>。</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+/* View: font size, mode (精读 / 通读 / 跟读), note hover links. */
+(function () {
+  var root = document.documentElement, body = document.body;
+  var scale = 1, mode = "study";
+  try {
+    scale = parseFloat(localStorage.getItem("topik-scale")) || 1;
+    mode = localStorage.getItem("topik-mode") || "study";
+  } catch (e) {}
+  if (["study", "read", "shadow"].indexOf(mode) < 0) mode = "study";
+  var sizeEl = document.getElementById("size");
+  var modeBtns = document.querySelectorAll("[data-mode]");
+
+  function applyScale() {
+    root.style.setProperty("--scale", scale);
+    sizeEl.textContent = Math.round(scale * 100) + "%";
+    try { localStorage.setItem("topik-scale", String(scale)); } catch (e) {}
+  }
+  function applyMode() {
+    body.classList.toggle("reading", mode === "read");
+    body.classList.toggle("shadowing", mode === "shadow");
+    modeBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-mode") === mode ? "true" : "false"); });
+    try { localStorage.setItem("topik-mode", mode); } catch (e) {}
+    document.dispatchEvent(new CustomEvent("topik-mode", { detail: mode }));
+  }
+  document.getElementById("smaller").addEventListener("click", function () {
+    scale = Math.max(0.85, Math.round((scale - 0.1) * 10) / 10); applyScale();
+  });
+  document.getElementById("bigger").addEventListener("click", function () {
+    scale = Math.min(1.5, Math.round((scale + 0.1) * 10) / 10); applyScale();
+  });
+  modeBtns.forEach(function (b) {
+    b.addEventListener("click", function () { mode = b.getAttribute("data-mode"); applyMode(); });
+  });
+  window.topikMode = function () { return mode; };
+  applyScale(); applyMode();
+
+  function link(el, on) {
+    var k = el.getAttribute("data-k");
+    document.querySelectorAll('[data-k="' + k + '"]').forEach(function (n) { n.classList.toggle("on", on); });
+  }
+  document.querySelectorAll(".note[data-k], .s .hl[data-k]").forEach(function (el) {
+    el.addEventListener("mouseenter", function () { link(el, true); });
+    el.addEventListener("mouseleave", function () { link(el, false); });
+  });
+})();
+</script>
+
+<script>
+/* Read-aloud and shadowing with the browser's own speech synthesis. */
+(function () {
+  var body = document.body;
+  var note = document.getElementById("tts-note");
+  var synth = window.speechSynthesis;
+  if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
+    body.classList.add("no-tts");
+    note.textContent = "当前环境不支持语音朗读。请用 Chrome 或 Edge 浏览器打开这个页面的链接。";
+    note.hidden = false;
+    return;
+  }
+
+  /* ---------- settings ---------- */
+  var RATES = [0.75, 0.9, 1], GAPS = [1, 1.4, 1.8], SPLITS = ["auto", "pause", "chunk"];
+  var rate = 0.9, gapF = 1.4, split = "auto", savedVoice = "";
+  try {
+    rate = parseFloat(localStorage.getItem("topik-rate")) || 0.9;
+    gapF = parseFloat(localStorage.getItem("topik-gap")) || 1.4;
+    split = localStorage.getItem("topik-split") || "auto";
+    savedVoice = localStorage.getItem("topik-voice") || "";
+  } catch (e) {}
+  if (RATES.indexOf(rate) < 0) rate = 0.9;
+  if (GAPS.indexOf(gapF) < 0) gapF = 1.4;
+  if (SPLITS.indexOf(split) < 0) split = "auto";
+  var pauseOK = null; /* auto mode: null = not known yet */
+
+  var speedBtn = document.getElementById("speed"), gapBtn = document.getElementById("gap");
+  var splitBtn = document.getElementById("split"), stopBtn = document.getElementById("stop");
+  function save(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function labels() {
+    speedBtn.textContent = "语速 " + rate + "×";
+    gapBtn.textContent = "停顿 " + gapF + "×";
+    var s = split === "pause" ? "整句暂停" : split === "chunk" ? "逐块" :
+      "自动" + (pauseOK === true ? "·整句暂停" : pauseOK === false ? "·逐块" : "");
+    splitBtn.textContent = "断句 " + s;
+  }
+  speedBtn.addEventListener("click", function () { rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; save("topik-rate", String(rate)); labels(); });
+  gapBtn.addEventListener("click", function () { gapF = GAPS[(GAPS.indexOf(gapF) + 1) % GAPS.length]; save("topik-gap", String(gapF)); labels(); });
+  splitBtn.addEventListener("click", function () {
+    split = SPLITS[(SPLITS.indexOf(split) + 1) % SPLITS.length];
+    if (split === "auto") pauseOK = null;
+    save("topik-split", split); labels();
+  });
+  labels();
+
+  /* ---------- voices ---------- */
+  var voices = [], voice = null;
+  var sel = document.getElementById("voice"), selWrap = document.getElementById("voice-wrap");
+  function score(v) {
+    return (/Natural|Online|Neural/i.test(v.name) ? 4 : 0) + (/Google/i.test(v.name) ? 3 : 0) + (v.localService ? 0 : 1);
+  }
+  function loadVoices() {
+    voices = synth.getVoices().filter(function (v) { return /^ko([-_]|$)/i.test(v.lang); });
+    voices.sort(function (a, b) { return score(b) - score(a); });
+    voice = voices.filter(function (v) { return v.name === savedVoice; })[0] || voices[0] || null;
+    sel.innerHTML = "";
+    voices.forEach(function (v, i) {
+      var o = document.createElement("option");
+      o.value = String(i); o.textContent = v.name; if (v === voice) o.selected = true;
+      sel.appendChild(o);
+    });
+    selWrap.hidden = voices.length === 0;
+    if (voices.length) note.hidden = true;
+  }
+  sel.addEventListener("change", function () {
+    voice = voices[+sel.value] || null;
+    savedVoice = voice ? voice.name : "";
+    save("topik-voice", savedVoice);
+    if (split === "auto") { pauseOK = null; labels(); }
+  });
+  loadVoices();
+  if (synth.addEventListener) synth.addEventListener("voiceschanged", loadVoices);
+  else synth.onvoiceschanged = loadVoices;
+  setTimeout(function () {
+    if (!voices.length) {
+      note.textContent = "这个窗口里没找到韩语语音，点喇叭可能没有声音或读音不对。可以用 Chrome 或 Edge 浏览器打开这个页面的链接（自带韩语语音），或在 Windows 设置 → 时间和语言 → 语音 里添加韩语语音包。";
+      note.hidden = false;
+    }
+  }, 1800);
+  function googleRemote() { return voice && !voice.localService && /Google/i.test(voice.name); }
+
+  /* ---------- playback core ---------- */
+  var token = 0, marked = [], timers = [], pressed = [], stageEl = null, keepAlive = null;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function stage(t) { if (stageEl) stageEl.textContent = t || ""; }
+  function mark(els, scroll) {
+    marked.forEach(function (e) { e.classList.remove("speaking"); });
+    marked = els ? [].concat(els) : [];
+    marked.forEach(function (e) { e.classList.add("speaking"); });
+    if (scroll && marked.length) {
+      var s = marked[0].closest(".s") || marked[0], r = s.getBoundingClientRect();
+      if (r.top < 80 || r.bottom > window.innerHeight - 20) s.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+    }
+  }
+  var activePlayer = null;
+  function stop() {
+    token++;
+    timers.forEach(clearTimeout); timers = [];
+    synth.cancel();
+    if (synth.paused) synth.resume(); /* Chrome stays paused after cancel otherwise */
+    if (activePlayer) { var p = activePlayer; activePlayer = null; p.halt(); }
+    mark(null);
+    stage(""); stageEl = null;
+    pressed.forEach(function (b) {
+      b.setAttribute("aria-pressed", "false");
+      if (b.dataset.idle) b.querySelector(".lbl").textContent = b.dataset.idle;
+    });
+    pressed = [];
+    stopBtn.hidden = true;
+    if (keepAlive) { clearInterval(keepAlive); keepAlive = null; }
+  }
+  function run(steps, opt) {
+    stop();
+    opt = opt || {};
+    var my = token, i = 0;
+    stageEl = opt.stage || null;
+    if (opt.btn) {
+      opt.btn.setAttribute("aria-pressed", "true");
+      if (opt.busy) { opt.btn.dataset.idle = opt.btn.querySelector(".lbl").textContent; opt.btn.querySelector(".lbl").textContent = opt.busy; }
+      pressed.push(opt.btn);
+    }
+    stopBtn.hidden = false;
+    if (googleRemote()) keepAlive = setInterval(function () { if (synth.speaking && !synth.paused) { synth.pause(); synth.resume(); } }, 9000);
+    function next() {
+      if (my !== token) return;
+      if (i >= steps.length) { stop(); return; }
+      steps[i++](next, my);
+    }
+    later(next, 60);
+  }
+  function utter(text, onend, onboundary, onstart) {
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "ko-KR"; u.rate = rate;
+    if (voice) u.voice = voice;
+    u.onstart = onstart || null;
+    if (onboundary) u.onboundary = onboundary;
+    u.onend = onend;
+    u.onerror = function (e) { if (e.error !== "interrupted" && e.error !== "canceled") onend(); };
+    synth.speak(u);
+  }
+  function waitFor(dur) { return Math.max(800, dur * gapF); }
+
+  /* Speak a text once; gap: 0 = go on at once, number = fixed ms, "auto" = room to repeat it. */
+  function sSay(text, els, gap, label, scroll) {
+    return function (next, my) {
+      if (label !== undefined) stage(label);
+      mark(els, scroll);
+      var parts = googleRemote() ? text.split(/[,，]\s*/).filter(Boolean) : [text];
+      var j = 0, t0 = Date.now(), started = false;
+      (function part() {
+        if (my !== token) return;
+        if (j >= parts.length) {
+          var wait = gap === "auto" ? waitFor(Date.now() - t0) : (gap || 0);
+          if (wait) later(function () { if (my === token) next(); }, wait); else next();
+          return;
+        }
+        utter(parts[j++], part, null, function () { if (!started) { started = true; t0 = Date.now(); } });
+      })();
+    };
+  }
+  function sGap(ms) { return function (next, my) { later(function () { if (my === token) next(); }, ms); }; }
+
+  function chunksOf(s) {
+    return Array.prototype.map.call(s.querySelectorAll(".ck"), function (c) {
+      return { text: c.getAttribute("data-t"), start: +c.getAttribute("data-start"), el: c };
+    });
+  }
+  function runChunks(chunks, from, next, my, scroll) {
+    var i = from;
+    (function go() {
+      if (my !== token) return;
+      if (i >= chunks.length) { next(); return; }
+      var c = chunks[i++];
+      sSay(c.text, c.el, "auto", undefined, scroll)(go, my);
+    })();
+  }
+
+  /* Chunked reading of one sentence. Preferred: synthesize the whole sentence once and pause at
+     breath-group boundaries (keeps the sentence's own intonation). Falls back to one utterance
+     per chunk when the voice sends no word boundaries or ignores pause(). */
+  function sPauseRead(s, label, scroll) {
+    return function (next, my) {
+      if (label !== undefined) stage(label);
+      var chunks = chunksOf(s);
+      var usePause = split === "pause" || (split === "auto" && pauseOK !== false);
+      if (chunks.length < 2 || !usePause) { runChunks(chunks, 0, next, my, scroll); return; }
+      var idx = 0, cStart = Date.now(), waiting = false, done = false, lastEvt = Date.now(), gotWord = false;
+      function fail(from) {
+        if (done) return;
+        done = true;
+        clearInterval(dog);
+        if (split === "auto") { pauseOK = false; labels(); }
+        synth.cancel();
+        later(function () { if (my === token) runChunks(chunks, from, next, my, scroll); }, 120);
+      }
+      var dog = setInterval(function () {
+        if (my !== token || done) { clearInterval(dog); return; }
+        if (gotWord && !waiting && Date.now() - lastEvt > 5000) fail(idx);
+      }, 1000);
+      mark(chunks[0].el, scroll);
+      utter(s.getAttribute("data-text"), function () {
+        if (my !== token || done) return;
+        if (waiting || idx < chunks.length - 1) { fail(0); return; }
+        done = true; clearInterval(dog);
+        if (split === "auto" && pauseOK === null) { pauseOK = true; labels(); }
+        later(function () { if (my === token) next(); }, waitFor(Date.now() - cStart));
+      }, function (e) {
+        if (my !== token || done) return;
+        if (e.name && e.name !== "word") return;
+        gotWord = true; lastEvt = Date.now();
+        var nb = chunks[idx + 1];
+        if (!nb || waiting || e.charIndex < nb.start) return;
+        waiting = true;
+        var dur = Date.now() - cStart;
+        synth.pause();
+        later(function () {
+          if (my !== token || done) return;
+          waiting = false; idx++; cStart = Date.now(); lastEvt = Date.now();
+          mark(chunks[idx].el, scroll);
+          synth.resume();
+        }, waitFor(dur));
+      }, function () { cStart = Date.now(); lastEvt = Date.now(); });
+    };
+  }
+
+  /* ---------- controls ---------- */
+  stopBtn.addEventListener("click", stop);
+  document.addEventListener("topik-mode", function (e) {
+    stop();
+    document.querySelectorAll(".play-all .lbl").forEach(function (l) {
+      l.textContent = e.detail === "shadow" ? "全文跟读" : "朗读全文";
+    });
+  });
+  document.querySelectorAll(".play-all .lbl").forEach(function (l) {
+    l.textContent = window.topikMode && topikMode() === "shadow" ? "全文跟读" : "朗读全文";
+  });
+
+  document.querySelectorAll(".say-s").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var s = b.closest(".s");
+      if (pressed.indexOf(b) >= 0) { stop(); return; }
+      run([sSay(s.getAttribute("data-text"), s, 0)], { btn: b });
+    });
+  });
+  document.querySelectorAll(".say[data-say]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      if (pressed.indexOf(b) >= 0) { stop(); return; }
+      run([sSay(b.getAttribute("data-say"), b, 0)], { btn: b });
+    });
+  });
+  document.querySelectorAll(".s .hl").forEach(function (h) {
+    h.addEventListener("click", function () {
+      if (!body.classList.contains("reading") && !body.classList.contains("shadowing")) run([sSay(h.textContent, h, 0)]);
+    });
+  });
+  document.querySelectorAll(".play-all").forEach(function (b) {
+    b.addEventListener("click", function () {
+      if (pressed.indexOf(b) >= 0) { stop(); return; }
+      var sents = document.getElementById(b.getAttribute("data-art")).querySelectorAll(".s");
+      var steps = [], shadow = body.classList.contains("shadowing");
+      Array.prototype.forEach.call(sents, function (s) {
+        if (shadow) { steps.push(sPauseRead(s, undefined, true)); steps.push(sGap(500)); }
+        else steps.push(sSay(s.getAttribute("data-text"), s, 0, undefined, true));
+      });
+      run(steps, { btn: b, busy: "停止" });
+    });
+  });
+
+  document.querySelectorAll(".sh-go").forEach(function (b) {
+    b.addEventListener("click", function () {
+      if (pressed.indexOf(b) >= 0) { stop(); return; }
+      var s = b.closest(".s"), text = s.getAttribute("data-text");
+      run([
+        sSay(text, s, 700, "① 听整句"),
+        sPauseRead(s, "② 分段跟读：每块后停顿，跟着说"),
+        sGap(500),
+        sSay(text, s, 0, "③ 跟着整句一起说")
+      ], { btn: b, stage: s.querySelector(".sh-stage"), busy: "停止" });
+    });
+  });
+  /* ---------- sentence player: whole-sentence bar, word-level seek, pause/resume ---------- */
+  var calib = 7.5 / 1000; /* characters per ms at rate 1; refined after each play */
+  function Player(s) {
+    var self = this;
+    this.s = s;
+    this.text = s.getAttribute("data-text");
+    this.len = this.text.length;
+    this.words = [];
+    var re = /\S+/g, m;
+    while ((m = re.exec(this.text))) this.words.push(m.index);
+    this.chunks = chunksOf(s);
+    var pl = s.querySelector(".pl");
+    this.btn = pl.querySelector(".pl-btn");
+    this.track = pl.querySelector(".pl-track");
+    this.lab = pl.querySelector(".pl-pos");
+    this.fill = document.createElement("span"); this.fill.className = "pl-fill";
+    this.knob = document.createElement("span"); this.knob.className = "pl-knob";
+    this.track.appendChild(this.fill);
+    this.chunks.forEach(function (c, i) {
+      if (!i) return;
+      var t = document.createElement("span");
+      t.className = "pl-tick";
+      t.style.left = (c.start / self.len * 100) + "%";
+      self.track.appendChild(t);
+    });
+    this.track.appendChild(this.knob);
+    this.track.setAttribute("aria-valuemax", String(this.words.length));
+    this.c = 0; this.pos = 0; this.playing = false; this.nPaused = false;
+    this.raf = 0; this.gotB = false; this.lastB = 0; this.curChunk = -1;
+    this.render(0);
+
+    this.btn.addEventListener("click", function () { self.toggle(); });
+    var drag = false, was = false;
+    function frac(e) {
+      var r = self.track.getBoundingClientRect();
+      return Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    }
+    this.track.addEventListener("pointerdown", function (e) {
+      drag = true; was = self.playing;
+      if (self.playing || self.nPaused) stop();
+      self.track.classList.add("dragging");
+      try { self.track.setPointerCapture(e.pointerId); } catch (err) {}
+      self.render(self.words[self.wordAt(frac(e) * self.len)]);
+    });
+    this.track.addEventListener("pointermove", function (e) {
+      if (drag) self.render(self.words[self.wordAt(frac(e) * self.len)]);
+    });
+    function release(e, cancelled) {
+      if (!drag) return;
+      drag = false;
+      self.track.classList.remove("dragging");
+      var i = cancelled ? self.pos : self.wordAt(frac(e) * self.len);
+      self.pos = i; self.render(self.words[i]);
+      if (was) self.playFrom(i);
+    }
+    this.track.addEventListener("pointerup", function (e) { release(e, false); });
+    this.track.addEventListener("pointercancel", function (e) { release(e, true); });
+    this.track.addEventListener("keydown", function (e) {
+      var k = e.key, n = self.words.length;
+      if (k === "ArrowRight") self.seek(Math.min(n - 1, self.wordAt(self.c) + 1));
+      else if (k === "ArrowLeft") self.seek(Math.max(0, self.wordAt(self.c) - 1));
+      else if (k === "Home") self.seek(0);
+      else if (k === "End") self.seek(n - 1);
+      else if (k === " " || k === "Enter") self.toggle();
+      else return;
+      e.preventDefault();
+    });
+  }
+  Player.prototype.wordAt = function (c) {
+    var i = 0;
+    for (var k = 0; k < this.words.length; k++) if (this.words[k] <= c + 0.01) i = k;
+    return i;
+  };
+  Player.prototype.chunkAt = function (c) {
+    var i = 0;
+    for (var k = 0; k < this.chunks.length; k++) if (this.chunks[k].start <= c + 0.01) i = k;
+    return i;
+  };
+  Player.prototype.render = function (c) {
+    this.c = c;
+    var pct = Math.min(100, c / this.len * 100) + "%";
+    this.fill.style.width = pct;
+    this.knob.style.left = pct;
+    var ci = this.chunkAt(c);
+    this.lab.textContent = (ci + 1) + " / " + this.chunks.length;
+    this.track.setAttribute("aria-valuenow", String(this.wordAt(c) + 1));
+    this.track.setAttribute("aria-valuetext", "第 " + (ci + 1) + " 块，共 " + this.chunks.length + " 块");
+    if (this.playing && ci !== this.curChunk) { this.curChunk = ci; mark(this.chunks[ci].el); }
+  };
+  Player.prototype.setIcon = function () {
+    this.btn.classList.toggle("is-playing", this.playing);
+    this.btn.setAttribute("aria-label", this.playing ? "暂停" : "播放这句");
+  };
+  Player.prototype.playFrom = function (i) {
+    var self = this;
+    stop();
+    activePlayer = this;
+    var my = token, base = this.words[i], t0 = Date.now();
+    this.playing = true; this.nPaused = false; this.gotB = false; this.curChunk = -1;
+    this.setIcon();
+    stopBtn.hidden = false;
+    this.render(base);
+    function tick() {
+      if (my !== token || !self.playing) return;
+      if (!self.gotB) self.render(Math.min(self.len - 0.5, base + (Date.now() - t0) * calib * rate));
+      self.raf = requestAnimationFrame(tick);
+    }
+    utter(this.text.slice(base), function () {
+      if (my !== token) return;
+      var dur = Date.now() - t0;
+      if (dur > 800) calib = Math.min(0.03, Math.max(0.002, (self.len - base) / dur / rate));
+      cancelAnimationFrame(self.raf);
+      self.playing = false; self.nPaused = false; self.pos = 0;
+      self.render(self.len); self.setIcon();
+      mark(null); stopBtn.hidden = true;
+      if (activePlayer === self) activePlayer = null;
+    }, function (e) {
+      if (my !== token) return;
+      if (e.name && e.name !== "word") return;
+      self.gotB = true; self.lastB = Date.now();
+      self.render(base + e.charIndex);
+    }, function () { t0 = Date.now(); });
+    this.raf = requestAnimationFrame(tick);
+  };
+  Player.prototype.pause = function () {
+    if (!this.playing) return;
+    var i = this.wordAt(this.c);
+    if (this.gotB && split !== "chunk") {
+      /* the voice reports words, so a real pause keeps the sentence's intonation */
+      synth.pause();
+      cancelAnimationFrame(this.raf);
+      this.playing = false; this.nPaused = true; this.pos = i;
+      this.setIcon(); stopBtn.hidden = true;
+    } else {
+      stop();
+      this.pos = i; this.render(this.words[i]);
+    }
+  };
+  Player.prototype.resume = function () {
+    var self = this, my = token, mark0 = Date.now();
+    this.nPaused = false; this.playing = true; this.lastB = mark0;
+    this.setIcon(); stopBtn.hidden = false;
+    synth.resume();
+    later(function () {
+      /* no word reported after resume: the voice did not resume, so restart from the paused word */
+      if (my === token && self.playing && self.lastB === mark0) self.playFrom(self.pos);
+    }, 2500);
+  };
+  Player.prototype.seek = function (i) {
+    var was = this.playing;
+    if (this.playing || this.nPaused) stop();
+    this.pos = i; this.render(this.words[i]);
+    if (was) this.playFrom(i);
+  };
+  Player.prototype.toggle = function () {
+    if (this.playing) this.pause();
+    else if (this.nPaused) this.resume();
+    else this.playFrom(this.pos >= this.words.length ? 0 : this.pos);
+  };
+  Player.prototype.halt = function () {
+    cancelAnimationFrame(this.raf);
+    if (this.playing || this.nPaused) this.pos = this.c >= this.len - 0.5 ? 0 : this.wordAt(this.c);
+    this.playing = false; this.nPaused = false;
+    this.setIcon();
+  };
+
+  var players = [];
+  document.querySelectorAll(".s").forEach(function (s) { if (s.querySelector(".pl")) players.push(new Player(s)); });
+  function playerOf(s) { return players.filter(function (p) { return p.s === s; })[0]; }
+  function playChunk(c) {
+    var p = playerOf(c.closest(".s"));
+    p.playFrom(p.wordAt(+c.getAttribute("data-start")));
+  }
+  document.querySelectorAll(".ck").forEach(function (c) {
+    c.addEventListener("click", function () { playChunk(c); });
+    c.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playChunk(c); }
+    });
+  });
+  window.addEventListener("pagehide", function () { synth.cancel(); });
+})();
+</script>
+
